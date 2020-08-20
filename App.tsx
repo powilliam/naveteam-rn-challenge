@@ -1,21 +1,34 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { AppLoading } from "expo";
+import {
+  useFonts,
+  Montserrat_400Regular,
+  Montserrat_600SemiBold,
+} from "@expo-google-fonts/montserrat";
+import { NavigationContainer } from "@react-navigation/native";
 
-export default function App() {
+import ThemeContext from "./src/contexts/ThemeContext";
+import Routes from "./src/routes";
+
+const NaveteamChallenge: React.FC = () => {
+  const [isFontsLoaded] = useFonts({
+    Montserrat_400Regular,
+    Montserrat_600SemiBold,
+  });
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <React.Fragment>
+      {!isFontsLoaded ? (
+        <AppLoading />
+      ) : (
+        <ThemeContext>
+          <NavigationContainer>
+            <Routes />
+          </NavigationContainer>
+        </ThemeContext>
+      )}
+    </React.Fragment>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default NaveteamChallenge;
