@@ -4,12 +4,6 @@ export interface TitleProps {
   large?: boolean;
 }
 
-export interface ButtonProps {
-  type?: "outlined" | "contained";
-}
-
-export interface ButtonTextProps extends ButtonProps {}
-
 export const Container = styled.View`
   flex: 1;
   background-color: ${(props) => props.theme.backgroundColor};
@@ -45,29 +39,4 @@ export const Actions = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-`;
-
-export const Button = styled.TouchableOpacity<ButtonProps>`
-  width: 156px;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  height: 40px;
-  background-color: ${(props) =>
-    props.type === "contained"
-      ? props.theme.primaryColor
-      : props.theme.backgroundColor};
-  border-width: 1px;
-  border-color: ${(props) => props.theme.primaryColor};
-`;
-
-export const ButtonText = styled.Text<ButtonTextProps>`
-  margin-left: 13px;
-  font-family: Montserrat_400Regular;
-  color: ${(props) =>
-    props.type === "contained"
-      ? props.theme.backgroundColor
-      : props.theme.primaryColor};
-  font-size: 14px;
-  line-height: 24px;
 `;

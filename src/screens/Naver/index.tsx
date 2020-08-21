@@ -3,6 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import Header from "../../components/Header";
+import Button from "../../components/Button";
 
 import {
   Container,
@@ -11,8 +12,6 @@ import {
   Title,
   Description,
   Actions,
-  Button,
-  ButtonText,
 } from "./styles";
 
 const Naver: React.FC = () => {
@@ -49,15 +48,31 @@ const Naver: React.FC = () => {
         <Description>Lorem Ipsun</Description>
 
         <Actions>
-          <Button>
-            <MaterialIcons name="delete" size={24} />
-            <ButtonText>Excluir</ButtonText>
-          </Button>
-
-          <Button type="contained" onPress={handleNavigateToUpdateNave}>
-            <MaterialIcons name="edit" size={24} color="#FFF" />
-            <ButtonText type="contained">Editar</ButtonText>
-          </Button>
+          <Button
+            size="normal"
+            title="Excluir"
+            icon={
+              <MaterialIcons
+                name="delete"
+                size={24}
+                style={{ marginRight: 13 }}
+              />
+            }
+          />
+          <Button
+            size="normal"
+            title="Editar"
+            type="contained"
+            onPress={handleNavigateToUpdateNave}
+            icon={
+              <MaterialIcons
+                name="edit"
+                size={24}
+                color="#FFF"
+                style={{ marginRight: 13 }}
+              />
+            }
+          />
         </Actions>
       </Informations>
     </Container>

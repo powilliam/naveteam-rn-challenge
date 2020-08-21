@@ -29,7 +29,7 @@ const Signin: React.FC = () => {
           containerStyle={{ marginTop: 12 }}
         />
 
-        <Button title="Entrar" style={{ marginTop: 40 }} />
+        <Button title="Entrar" type="contained" style={{ marginTop: 40 }} />
       </Form>
     </Container>
   );

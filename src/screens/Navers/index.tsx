@@ -5,14 +5,9 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 import Header from "../../components/Header";
 import Naver from "../../components/Naver";
+import Button from "../../components/Button";
 
-import {
-  Container,
-  ListHeader,
-  ListHeaderTitle,
-  CreateButton,
-  CreateButtonText,
-} from "./styles";
+import { Container, ListHeader, ListHeaderTitle } from "./styles";
 
 const Navers: React.FC = () => {
   const { dispatch, navigate } = useNavigation();
@@ -30,9 +25,12 @@ const Navers: React.FC = () => {
     () => (
       <ListHeader>
         <ListHeaderTitle>Navers</ListHeaderTitle>
-        <CreateButton onPress={handleNavigateToCreateNaver}>
-          <CreateButtonText>Adicionar naver</CreateButtonText>
-        </CreateButton>
+        <Button
+          size="normal"
+          type="contained"
+          title="Adicionar naver"
+          onPress={handleNavigateToCreateNaver}
+        />
       </ListHeader>
     ),
     []

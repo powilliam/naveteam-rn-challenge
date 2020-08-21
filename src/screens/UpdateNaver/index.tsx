@@ -48,7 +48,7 @@ const UpdateNaver: React.FC = () => {
           containerStyle={{ marginTop: 12 }}
         />
 
-        <Button title="Salvar" />
+        <Button type="contained" title="Salvar" style={{ marginTop: 40 }} />
       </Form>
     </Container>
   );
