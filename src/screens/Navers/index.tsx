@@ -15,18 +15,22 @@ import {
 } from "./styles";
 
 const Navers: React.FC = () => {
-  const { dispatch } = useNavigation();
+  const { dispatch, navigate } = useNavigation();
 
   const handleOpenDrawer = useCallback(
     () => dispatch(DrawerActions.openDrawer()),
     [dispatch]
+  );
+  const handleNavigateToCreateNaver = useCallback(
+    () => navigate("CreateNaver"),
+    [navigate]
   );
 
   const renderListHeaderComponent = useCallback(
     () => (
       <ListHeader>
         <ListHeaderTitle>Navers</ListHeaderTitle>
-        <CreateButton rippleColor="#FFF">
+        <CreateButton onPress={handleNavigateToCreateNaver}>
           <CreateButtonText>Adicionar naver</CreateButtonText>
         </CreateButton>
       </ListHeader>

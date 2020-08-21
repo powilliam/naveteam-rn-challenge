@@ -3,16 +3,10 @@ import { ThemeContext } from "styled-components";
 
 import NaveLogo from "../../assets/naver-logo.png";
 
-import {
-  Container,
-  Logo,
-  Form,
-  Block,
-  Label,
-  Input,
-  SigninButton,
-  SigninButtonText,
-} from "./styles";
+import Input from "../../components/Input";
+import Button from "../../components/Button";
+
+import { Container, Logo, Form } from "./styles";
 
 const Signin: React.FC = () => {
   const { placeholderTextColor } = useContext(ThemeContext);
@@ -22,25 +16,20 @@ const Signin: React.FC = () => {
       <Logo source={NaveLogo} resizeMode="contain" />
 
       <Form>
-        <Block>
-          <Label>E-mail</Label>
-          <Input
-            placeholder="E-mail"
-            placeholderTextColor={placeholderTextColor}
-          />
-        </Block>
+        <Input
+          label="E-mail"
+          placeholder="E-mail"
+          placeholderTextColor={placeholderTextColor}
+        />
 
-        <Block style={{ marginTop: 12 }}>
-          <Label>Senha</Label>
-          <Input
-            placeholder="Senha"
-            placeholderTextColor={placeholderTextColor}
-          />
-        </Block>
+        <Input
+          label="Senha"
+          placeholder="Senha"
+          placeholderTextColor={placeholderTextColor}
+          containerStyle={{ marginTop: 12 }}
+        />
 
-        <SigninButton rippleColor="#FFF">
-          <SigninButtonText>Entrar</SigninButtonText>
-        </SigninButton>
+        <Button title="Entrar" style={{ marginTop: 40 }} />
       </Form>
     </Container>
   );

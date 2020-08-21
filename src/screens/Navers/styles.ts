@@ -1,5 +1,4 @@
 import styled from "styled-components/native";
-import { BorderlessButton, RectButton } from "react-native-gesture-handler";
 
 export const Container = styled.View`
   flex: 1;
@@ -21,7 +20,7 @@ export const ListHeaderTitle = styled.Text`
   line-height: 32px;
 `;
 
-export const CreateButton = styled(RectButton)`
+export const CreateButton = styled.TouchableOpacity`
   width: 155px;
   background-color: ${(props) => props.theme.primaryColor};
   height: 40px;
