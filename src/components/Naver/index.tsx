@@ -47,7 +47,7 @@ const Naver: React.FC = () => {
       <RectButton onPress={handleNavigateToNaver}>
         <Image
           source={{ uri: "https://github.com/powilliam.png" }}
-          resizeMode="contain"
+          resizeMode="cover"
         />
       </RectButton>
       <Name>William Porto</Name>

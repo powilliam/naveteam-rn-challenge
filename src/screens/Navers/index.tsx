@@ -55,6 +55,7 @@ const Navers: React.FC = () => {
         data={[0, 1, 2, 3, 4, 5]}
         ListHeaderComponent={renderListHeaderComponent}
         contentContainerStyle={{ paddingBottom: 36 }}
+        columnWrapperStyle={{ marginLeft: 16 }}
         renderItem={renderNaverItem}
         numColumns={2}
         keyExtractor={extractNaverKey}
