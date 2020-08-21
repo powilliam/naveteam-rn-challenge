@@ -1,5 +1,4 @@
 import styled from "styled-components/native";
-import { BorderlessButton } from "react-native-gesture-handler";
 
 export const Container = styled.View`
   height: 64px;
@@ -15,7 +14,7 @@ export const Logo = styled.Image`
   align-self: center;
 `;
 
-export const HeaderLeft = styled(BorderlessButton)`
+export const HeaderLeft = styled.TouchableOpacity`
   position: absolute;
   left: 16px;
 `;

@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
-import { BorderlessButton, RectButton } from "react-native-gesture-handler";
+import { RectButton } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import Modal from "react-native-modal";
@@ -53,19 +53,19 @@ const Naver: React.FC = () => {
       <Name>William Porto</Name>
       <Description>Mobile Developer</Description>
       <Actions>
-        <BorderlessButton
+        <TouchableOpacity
           onPress={handleToggleIsConfirmModalVisible}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
           <MaterialIcons name="delete" size={24} />
-        </BorderlessButton>
-        <BorderlessButton
+        </TouchableOpacity>
+        <TouchableOpacity
           onPress={handleNavigateToUpdateNave}
           style={{ marginLeft: 12 }}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
           <MaterialIcons name="edit" size={24} />
-        </BorderlessButton>
+        </TouchableOpacity>
       </Actions>
 
       <Modal isVisible={isConfirmModalVisible}>
