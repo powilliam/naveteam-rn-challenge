@@ -2,13 +2,24 @@ import styled from "styled-components/native";
 
 export interface ContainerProps {
   type?: "outlined" | "contained";
-  size?: "large" | "normal";
+  size?: "small" | "normal" | "large";
 }
 
 export interface TextProps extends Omit<ContainerProps, "size"> {}
 
 export const Container = styled.TouchableOpacity<ContainerProps>`
-  width: ${(props) => (props.size === "normal" ? "158px" : "100%")};
+  width: ${(props) => {
+    switch (props.size) {
+      case "small":
+        return "132px";
+
+      case "normal":
+        return "158px";
+
+      default:
+        return "100%";
+    }
+  }};
   flex-direction: row;
   align-items: center;
   justify-content: center;

@@ -15,7 +15,11 @@ const Header: React.FC<HeaderProps> = ({ headerLeftIcon, onPressLeftIcon }) => {
 
   return (
     <Container style={{ paddingTop: top }}>
-      <HeaderLeft onPress={onPressLeftIcon} style={{ top }}>
+      <HeaderLeft
+        onPress={onPressLeftIcon}
+        style={{ top }}
+        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+      >
         {headerLeftIcon}
       </HeaderLeft>
       <Logo source={NaveLogo} resizeMode="contain" />
