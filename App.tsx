@@ -7,7 +7,8 @@ import {
 } from "@expo-google-fonts/montserrat";
 import { NavigationContainer } from "@react-navigation/native";
 
-import ThemeContext from "./src/contexts/ThemeContext";
+import AuthProvider from "./src/contexts/AuthContext";
+import ThemeProvider from "./src/contexts/ThemeContext";
 import Routes from "./src/routes";
 
 const NaveteamChallenge: React.FC = () => {
@@ -21,11 +22,13 @@ const NaveteamChallenge: React.FC = () => {
       {!isFontsLoaded ? (
         <AppLoading />
       ) : (
-        <ThemeContext>
-          <NavigationContainer>
-            <Routes />
-          </NavigationContainer>
-        </ThemeContext>
+        <AuthProvider>
+          <ThemeProvider>
+            <NavigationContainer>
+              <Routes />
+            </NavigationContainer>
+          </ThemeProvider>
+        </AuthProvider>
       )}
     </React.Fragment>
   );

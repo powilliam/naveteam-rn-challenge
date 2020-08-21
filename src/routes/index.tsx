@@ -1,18 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 
-import Stack from "./Stack";
+import { AuthContext } from "../contexts/AuthContext";
 
-import Signin from "../screens/Signin";
-
-const { Navigator, Screen } = createDrawerNavigator();
+import LoginStack from "./LoginStack";
+import Drawer from "./Drawer";
 
 const Routes: React.FC = () => {
+  const { isAuthenticated } = useContext(AuthContext);
+
   return (
-    <Navigator initialRouteName="Signin">
-      <Screen name="Navers" component={Stack} />
-      <Screen name="Signin" component={Signin} options={{ title: "Entrar" }} />
-    </Navigator>
+    <React.Fragment>
+      {isAuthenticated ? <Drawer /> : <LoginStack />}
+    </React.Fragment>
   );
 };
 
