@@ -9,7 +9,7 @@ const { Navigator, Screen } = createStackNavigator();
 
 const Stack: React.FC = () => {
   return (
-    <Navigator>
+    <Navigator screenOptions={{ headerShown: false }}>
       <Screen name="Navers" component={Navers} />
       <Screen name="CreateNaver" component={CreateNaver} />
       <Screen name="UpdateNaver" component={UpdateNaver} />
