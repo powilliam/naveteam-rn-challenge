@@ -6,11 +6,6 @@ export const Container = styled.View`
   background-color: ${(props) => props.theme.backgroundColor};
 `;
 
-export const ToggleDrawerButton = styled(BorderlessButton)`
-  position: absolute;
-  left: 16px;
-`;
-
 export const ListHeader = styled.View`
   margin: 32px 0px;
   padding: 0px 16px;

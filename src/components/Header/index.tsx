@@ -3,18 +3,21 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import NaveLogo from "../../assets/naver-logo.png";
 
-import { Container, Logo } from "./styles";
+import { Container, Logo, HeaderLeft } from "./styles";
 
 export interface HeaderProps {
-  headerLeft?: ReactNode;
+  headerLeftIcon?: ReactNode;
+  onPressLeftIcon?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ headerLeft }) => {
+const Header: React.FC<HeaderProps> = ({ headerLeftIcon, onPressLeftIcon }) => {
   const { top } = useSafeAreaInsets();
 
   return (
-    <Container style={{ marginTop: top }}>
-      {headerLeft}
+    <Container style={{ paddingTop: top }}>
+      <HeaderLeft onPress={onPressLeftIcon} style={{ top }}>
+        {headerLeftIcon}
+      </HeaderLeft>
       <Logo source={NaveLogo} resizeMode="contain" />
     </Container>
   );

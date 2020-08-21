@@ -8,7 +8,6 @@ import Naver from "../../components/Naver";
 
 import {
   Container,
-  ToggleDrawerButton,
   ListHeader,
   ListHeaderTitle,
   CreateButton,
@@ -23,6 +22,17 @@ const Navers: React.FC = () => {
     [dispatch]
   );
 
+  const renderListHeaderComponent = useCallback(
+    () => (
+      <ListHeader>
+        <ListHeaderTitle>Navers</ListHeaderTitle>
+        <CreateButton rippleColor="#FFF">
+          <CreateButtonText>Adicionar naver</CreateButtonText>
+        </CreateButton>
+      </ListHeader>
+    ),
+    []
+  );
   const renderNaverItem = useCallback<ListRenderItem<number>>(
     () => <Naver />,
     []
@@ -35,23 +45,14 @@ const Navers: React.FC = () => {
   return (
     <Container>
       <Header
-        headerLeft={
-          <ToggleDrawerButton onPress={handleOpenDrawer} rippleColor="#FFF">
-            <MaterialIcons name="menu" size={24} />
-          </ToggleDrawerButton>
-        }
+        headerLeftIcon={<MaterialIcons name="menu" size={28} />}
+        onPressLeftIcon={handleOpenDrawer}
       />
-
-      <ListHeader>
-        <ListHeaderTitle>Navers</ListHeaderTitle>
-        <CreateButton rippleColor="#FFF">
-          <CreateButtonText>Adicionar naver</CreateButtonText>
-        </CreateButton>
-      </ListHeader>
 
       <FlatList
         data={[0, 1, 2, 3, 4, 5]}
-        contentContainerStyle={{ alignItems: "center", paddingBottom: 36 }}
+        ListHeaderComponent={renderListHeaderComponent}
+        contentContainerStyle={{ paddingBottom: 36 }}
         renderItem={renderNaverItem}
         numColumns={2}
         keyExtractor={extractNaverKey}
