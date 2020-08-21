@@ -1,9 +1,13 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { TouchableOpacity } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-community/async-storage";
 import Modal from "react-native-modal";
+
+import api from "../../services/api";
+import { Naver as NaverModel } from "../../models/Naver";
 
 import Button from "../Button";
 
@@ -17,17 +21,26 @@ import {
 
 import { Container, Image, Name, Description, Actions } from "./styles";
 
-const Naver: React.FC = () => {
+export interface NaverProps {
+  data: NaverModel;
+}
+
+const Naver: React.FC<NaverProps> = ({ data }) => {
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
   const { navigate } = useNavigation();
 
-  const handleNavigateToNaver = useCallback(() => navigate("Naver"), [
+  const id = useMemo(() => data.id, [data]);
+  const uri = useMemo(() => data.url, [data]);
+  const name = useMemo(() => data.name, [data]);
+  const description = useMemo(() => data.job_role, [data]);
+
+  const handleNavigateToNaver = useCallback(() => navigate("Naver", { id }), [
     navigate,
   ]);
   const handleNavigateToUpdateNave = useCallback(
-    () => navigate("UpdateNaver"),
+    () => navigate("UpdateNaver", { id }),
     [navigate]
   );
   const handleToggleIsConfirmModalVisible = useCallback(
@@ -37,21 +50,25 @@ const Naver: React.FC = () => {
   const handleToggleIsVisible = useCallback(() => setIsVisible(!isVisible), [
     isVisible,
   ]);
-  const handleConfirmDeletion = useCallback(() => {
-    setIsConfirmModalVisible(false);
-    setIsVisible(true);
-  }, []);
+  const handleConfirmDeletion = useCallback(async () => {
+    try {
+      setIsConfirmModalVisible(false);
+      await api.delete(`navers/${id}`, {
+        headers: {
+          Authorization: `Bearer ${await AsyncStorage.getItem("@JWT:TOKEN")}`,
+        },
+      });
+      setIsVisible(true);
+    } catch (error) {}
+  }, [id]);
 
   return (
     <Container>
       <RectButton onPress={handleNavigateToNaver}>
-        <Image
-          source={{ uri: "https://github.com/powilliam.png" }}
-          resizeMode="cover"
-        />
+        <Image source={{ uri }} resizeMode="cover" />
       </RectButton>
-      <Name>William Porto</Name>
-      <Description>Mobile Developer</Description>
+      <Name>{name}</Name>
+      <Description>{description}</Description>
       <Actions>
         <TouchableOpacity
           onPress={handleToggleIsConfirmModalVisible}

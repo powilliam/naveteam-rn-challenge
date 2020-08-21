@@ -1,8 +1,15 @@
-import React, { useState, useCallback } from "react";
-import { TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState, useCallback, useRef, useMemo } from "react";
+import { TouchableOpacity, ScrollView } from "react-native";
+import { useNavigation, RouteProp, useRoute } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { FormHandles, SubmitHandler } from "@unform/core";
+import AsyncStorage from "@react-native-community/async-storage";
 import Modal from "react-native-modal";
+
+import { RootStackParamList } from "../../routes/Stack";
+
+import api from "../../services/api";
+import { UpdateNaverDTO } from "../../services/dto/UpdateNaver.dto";
 
 import Header from "../../components/Header";
 import Input from "../../components/Input";
@@ -17,15 +24,42 @@ import {
 
 import { Container, Title, Form } from "./styles";
 
+export type UpdateNaverScreenRouteProp = RouteProp<
+  RootStackParamList,
+  "UpdateNaver"
+>;
+
 const UpdateNaver: React.FC = () => {
+  const formRef = useRef<FormHandles>(null);
+
   const [isVisible, setIsVisible] = useState(false);
 
   const { goBack } = useNavigation();
+  const { params } = useRoute<UpdateNaverScreenRouteProp>();
+
+  const id = useMemo(() => params.id, [params]);
 
   const handleGoBack = useCallback(() => goBack(), [goBack]);
   const handleToggleIsVisible = useCallback(() => setIsVisible(!isVisible), [
     isVisible,
     setIsVisible,
+  ]);
+  const handleSubmit = useCallback<SubmitHandler<UpdateNaverDTO>>(
+    async (data, { reset }) => {
+      try {
+        await api.put(`navers/${id}`, data, {
+          headers: {
+            Authorization: `Bearer ${await AsyncStorage.getItem("@JWT:TOKEN")}`,
+          },
+        });
+        reset();
+        setIsVisible(true);
+      } catch (error) {}
+    },
+    [id]
+  );
+  const onPressSaveButton = useCallback(() => formRef.current?.submitForm(), [
+    formRef,
   ]);
 
   return (
@@ -34,42 +68,49 @@ const UpdateNaver: React.FC = () => {
         headerLeftIcon={<MaterialIcons name="chevron-left" size={28} />}
         onPressLeftIcon={handleGoBack}
       />
-      <Form contentContainerStyle={{ paddingBottom: 16 }}>
-        <Title>Editar nave</Title>
-        <Input label="Nome" placeholder="Nome" />
-        <Input
-          label="Cargo"
-          placeholder="Cargo"
-          containerStyle={{ marginTop: 12 }}
-        />
-        <Input
-          label="Idade"
-          placeholder="Idade"
-          containerStyle={{ marginTop: 12 }}
-        />
-        <Input
-          label="Tempo de empresa"
-          placeholder="Tempo de empresa"
-          containerStyle={{ marginTop: 12 }}
-        />
-        <Input
-          label="Projetos que participou"
-          placeholder="Projetos que participou"
-          containerStyle={{ marginTop: 12 }}
-        />
-        <Input
-          label="URL da foto do naver"
-          placeholder="URL da foto do naver"
-          containerStyle={{ marginTop: 12 }}
-        />
+      <ScrollView contentContainerStyle={{ paddingBottom: 16 }}>
+        <Form ref={formRef} onSubmit={handleSubmit}>
+          <Title>Editar naver</Title>
+          <Input name="name" label="Nome" placeholder="Nome" />
+          <Input
+            name="job_role"
+            label="Cargo"
+            placeholder="Cargo"
+            containerStyle={{ marginTop: 12 }}
+          />
+          <Input
+            name="birthdate"
+            label="Data de nascimento"
+            placeholder="Data de nascimento"
+            containerStyle={{ marginTop: 12 }}
+          />
+          <Input
+            name="admission_date"
+            label="Data de admissão"
+            placeholder="Data de admissão"
+            containerStyle={{ marginTop: 12 }}
+          />
+          <Input
+            name="project"
+            label="Projetos que participou"
+            placeholder="Projetos que participou"
+            containerStyle={{ marginTop: 12 }}
+          />
+          <Input
+            name="url"
+            label="URL da foto do naver"
+            placeholder="URL da foto do naver"
+            containerStyle={{ marginTop: 12 }}
+          />
 
-        <Button
-          type="contained"
-          title="Salvar"
-          onPress={handleToggleIsVisible}
-          style={{ marginTop: 40 }}
-        />
-      </Form>
+          <Button
+            type="contained"
+            title="Salvar"
+            onPress={onPressSaveButton}
+            style={{ marginTop: 40 }}
+          />
+        </Form>
+      </ScrollView>
 
       <Modal isVisible={isVisible}>
         <ModalContainer>

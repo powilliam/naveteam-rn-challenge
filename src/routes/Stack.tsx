@@ -6,7 +6,14 @@ import Naver from "../screens/Naver";
 import CreateNaver from "../screens/CreateNaver";
 import UpdateNaver from "../screens/UpdateNaver";
 
-const { Navigator, Screen } = createStackNavigator();
+export type RootStackParamList = {
+  Navers: {};
+  Naver: { id: string };
+  CreateNaver: {};
+  UpdateNaver: { id: string };
+};
+
+const { Navigator, Screen } = createStackNavigator<RootStackParamList>();
 
 const Stack: React.FC = () => {
   return (

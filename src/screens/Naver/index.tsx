@@ -1,11 +1,19 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, RouteProp, useRoute } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-community/async-storage";
 import Modal from "react-native-modal";
+import moment from "moment";
+
+import api from "../../services/api";
+import { ShowNaverDTO } from "../../services/dto/ShowNaver.dto";
+import { Naver as NaverModel } from "../../models/Naver";
 
 import Header from "../../components/Header";
 import Button from "../../components/Button";
+
+import { RootStackParamList } from "../../routes/Stack";
 
 import {
   ModalContainer,
@@ -24,16 +32,31 @@ import {
   Actions,
 } from "./styles";
 
+export type NaverScreenRouteProp = RouteProp<RootStackParamList, "Naver">;
+
 const Naver: React.FC = () => {
+  const [naver, setNaver] = useState<NaverModel>({} as NaverModel);
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
   const { goBack, navigate } = useNavigation();
+  const { params } = useRoute<NaverScreenRouteProp>();
+
+  const id = useMemo(() => params.id, [params]);
+  const uri = useMemo(() => naver.url, [naver]);
+  const name = useMemo(() => naver.name, [naver]);
+  const description = useMemo(() => naver.job_role, [naver]);
+  const birthdate = useMemo(() => moment(naver.birthdate).format("L"), [naver]);
+  const admissionDate = useMemo(
+    () => moment(naver.admission_date).format("L"),
+    [naver]
+  );
+  const projects = useMemo(() => naver.project, [naver]);
 
   const handleGoBack = useCallback(() => goBack(), [goBack]);
   const handleNavigateToUpdateNave = useCallback(
-    () => navigate("UpdateNaver"),
-    [navigate]
+    () => navigate("UpdateNaver", { id }),
+    [navigate, id]
   );
   const handleToggleIsConfirmModalVisible = useCallback(
     () => setIsConfirmModalVisible(!isConfirmModalVisible),
@@ -42,10 +65,29 @@ const Naver: React.FC = () => {
   const handleToggleIsVisible = useCallback(() => setIsVisible(!isVisible), [
     isVisible,
   ]);
-  const handleConfirmDeletion = useCallback(() => {
-    setIsConfirmModalVisible(false);
-    setIsVisible(true);
-  }, []);
+  const handleConfirmDeletion = useCallback(async () => {
+    try {
+      setIsConfirmModalVisible(false);
+      await api.delete(`navers/${id}`, {
+        headers: {
+          Authorization: `Bearer ${await AsyncStorage.getItem("@JWT:TOKEN")}`,
+        },
+      });
+      setIsVisible(true);
+    } catch (error) {}
+  }, [id]);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await api.get(`navers/${id}`, {
+        headers: {
+          Authorization: `Bearer ${await AsyncStorage.getItem("@JWT:TOKEN")}`,
+        },
+      });
+
+      setNaver(data);
+    })();
+  }, [id]);
 
   return (
     <Container>
@@ -54,22 +96,19 @@ const Naver: React.FC = () => {
         onPressLeftIcon={handleGoBack}
       />
       <Informations>
-        <Image
-          source={{ uri: "https://github.com/powilliam.png" }}
-          resizeMode="cover"
-        />
+        <Image source={{ uri }} resizeMode="cover" />
 
-        <Title large>William Porto</Title>
-        <Description>Mobile Developer</Description>
+        <Title large>{name}</Title>
+        <Description>{description}</Description>
 
-        <Title>Idade</Title>
-        <Description>Lorem Ipsun</Description>
+        <Title>Data de nascimento</Title>
+        <Description>{birthdate}</Description>
 
-        <Title>Tempo de empresa</Title>
-        <Description>Lorem Ipsun</Description>
+        <Title>Data de admissão</Title>
+        <Description>{admissionDate}</Description>
 
         <Title>Projetos que participou</Title>
-        <Description>Lorem Ipsun</Description>
+        <Description>{projects}</Description>
 
         <Actions>
           <Button
@@ -130,7 +169,7 @@ const Naver: React.FC = () => {
         </ModalContainer>
       </Modal>
 
-      <Modal isVisible={isVisible}>
+      <Modal isVisible={isVisible} onModalHide={handleGoBack}>
         <ModalContainer>
           <ModalHeader>
             <ModalTitle>Naver excluido</ModalTitle>

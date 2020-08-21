@@ -1,4 +1,5 @@
 import styled from "styled-components/native";
+import { Form as UnformForm } from "@unform/mobile";
 
 export const Container = styled.View`
   flex: 1;
@@ -12,6 +13,6 @@ export const Title = styled.Text`
   align-self: center;
 `;
 
-export const Form = styled.ScrollView`
+export const Form = styled(UnformForm)`
   padding: 0px 16px;
 `;

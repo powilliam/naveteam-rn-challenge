@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import { RectButton } from "react-native-gesture-handler";
+import { Form as UnformForm } from "@unform/mobile";
 
 export const Container = styled.View`
   flex: 1;
@@ -13,7 +13,7 @@ export const Logo = styled.Image`
   height: 40px;
 `;
 
-export const Form = styled.View`
+export const Form = styled(UnformForm)`
   width: 100%;
   margin-top: 56px;
   padding: 0px 16px;

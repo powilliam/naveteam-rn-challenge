@@ -1,11 +1,11 @@
 import styled from "styled-components/native";
 
 export const Container = styled.View`
-  flex: 1;
-  margin-right: 16px;
+  margin: 0px 16px;
 `;
 
 export const Image = styled.Image`
+  min-width: 156px;
   height: 156px;
 `;
 
