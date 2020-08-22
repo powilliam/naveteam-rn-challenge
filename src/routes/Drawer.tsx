@@ -9,10 +9,7 @@ const { Navigator, Screen } = createDrawerNavigator();
 
 const Drawer: React.FC = () => {
   return (
-    <Navigator
-      initialRouteName="Signin"
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
-    >
+    <Navigator drawerContent={(props) => <CustomDrawerContent {...props} />}>
       <Screen name="Navers" component={Stack} />
     </Navigator>
   );

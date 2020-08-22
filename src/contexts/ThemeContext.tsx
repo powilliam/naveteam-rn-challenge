@@ -1,10 +1,12 @@
 import React from "react";
-import { ThemeProvider } from "styled-components";
+import { ThemeProvider as StyledComponentsThemeProvider } from "styled-components";
 
 import theme from "../themes/theme";
 
-const ThemeContext: React.FC = ({ children }) => (
-  <ThemeProvider theme={theme}>{children}</ThemeProvider>
+const ThemeProvider: React.FC = ({ children }) => (
+  <StyledComponentsThemeProvider theme={theme}>
+    {children}
+  </StyledComponentsThemeProvider>
 );
 
-export default ThemeContext;
+export default ThemeProvider;
