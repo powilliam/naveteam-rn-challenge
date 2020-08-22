@@ -15,6 +15,7 @@ import moment from "moment";
 import { NaversContext } from "../../contexts/NaversContext";
 
 import api from "../../services/api";
+import { ShowNaverDTO } from "../../services/dto/ShowNaver.dto";
 import { Naver as NaverModel } from "../../models/Naver";
 
 import Header from "../../components/Header";
@@ -88,7 +89,7 @@ const Naver: React.FC = () => {
 
   useEffect(() => {
     (async () => {
-      const { data } = await api.get(`navers/${id}`, {
+      const { data } = await api.get<ShowNaverDTO>(`navers/${id}`, {
         headers: {
           Authorization: `Bearer ${await AsyncStorage.getItem("@JWT:TOKEN")}`,
         },
