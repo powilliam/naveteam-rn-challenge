@@ -66,7 +66,7 @@ const CreateNaver: React.FC = () => {
       />
       <ScrollView contentContainerStyle={{ paddingBottom: 16 }}>
         <Form ref={formRef} onSubmit={handleSubmit}>
-          <Title>Adicionar nave</Title>
+          <Title>Adicionar naver</Title>
           <Input name="name" label="Nome" placeholder="Nome" />
           <Input
             name="job_role"
@@ -119,7 +119,7 @@ const CreateNaver: React.FC = () => {
               <MaterialIcons name="close" size={24} />
             </TouchableOpacity>
           </ModalHeader>
-          <ModalDescription>Naver adicionado com sucesso</ModalDescription>
+          <ModalDescription>Naver adicionado com sucesso!</ModalDescription>
         </ModalContainer>
       </Modal>
     </Container>

@@ -134,7 +134,7 @@ const UpdateNaver: React.FC = () => {
               <MaterialIcons name="close" size={24} />
             </TouchableOpacity>
           </ModalHeader>
-          <ModalDescription>Naver editado com sucesso</ModalDescription>
+          <ModalDescription>Naver editado com sucesso!</ModalDescription>
         </ModalContainer>
       </Modal>
     </Container>
