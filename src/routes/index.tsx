@@ -1,7 +1,8 @@
 import React, { useContext } from "react";
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import { NavigationContainer } from "@react-navigation/native";
 
 import { AuthContext } from "../contexts/AuthContext";
+import NaversProvider from "../contexts/NaversContext";
 
 import LoginStack from "./LoginStack";
 import Drawer from "./Drawer";
@@ -10,9 +11,15 @@ const Routes: React.FC = () => {
   const { isAuthenticated } = useContext(AuthContext);
 
   return (
-    <React.Fragment>
-      {isAuthenticated ? <Drawer /> : <LoginStack />}
-    </React.Fragment>
+    <NavigationContainer>
+      {!isAuthenticated ? (
+        <LoginStack />
+      ) : (
+        <NaversProvider>
+          <Drawer />
+        </NaversProvider>
+      )}
+    </NavigationContainer>
   );
 };
 

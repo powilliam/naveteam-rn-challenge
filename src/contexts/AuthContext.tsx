@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useEffect,
 } from "react";
+import { AppLoading } from "expo";
 import AsyncStorage from "@react-native-community/async-storage";
 
 import api from "../services/api";
@@ -26,6 +27,7 @@ export interface IAuthContext {
 export const AuthContext = createContext<IAuthContext>({} as IAuthContext);
 
 const AuthProvider: React.FC = ({ children }) => {
+  const [isVerifyingJwt, setIsVerifyingJwt] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const login = useCallback<LoginHandler>(async (data) => {
@@ -51,13 +53,23 @@ const AuthProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     (async () => {
+      setIsVerifyingJwt(true);
       const jwtToken = await AsyncStorage.getItem("@JWT:TOKEN");
 
       jwtToken ? setIsAuthenticated(true) : setIsAuthenticated(false);
     })();
+    setIsVerifyingJwt(false);
   }, []);
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <React.Fragment>
+      {isVerifyingJwt ? (
+        <AppLoading />
+      ) : (
+        <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+      )}
+    </React.Fragment>
+  );
 };
 
 export default AuthProvider;

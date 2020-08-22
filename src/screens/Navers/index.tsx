@@ -1,11 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext } from "react";
 import { FlatList, ListRenderItem } from "react-native";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-community/async-storage";
 
-import api from "../../services/api";
 import { Naver as NaverModel } from "../../models/Naver";
+import { NaversContext } from "../../contexts/NaversContext";
 
 import Header from "../../components/Header";
 import Naver from "../../components/Naver";
@@ -14,9 +13,8 @@ import Button from "../../components/Button";
 import { Container, ListHeader, ListHeaderTitle } from "./styles";
 
 const Navers: React.FC = () => {
-  const [navers, setNavers] = useState<NaverModel[]>([]);
-
   const { dispatch, navigate } = useNavigation();
+  const { data } = useContext(NaversContext);
 
   const handleOpenDrawer = useCallback(
     () => dispatch(DrawerActions.openDrawer()),
@@ -50,20 +48,6 @@ const Navers: React.FC = () => {
     []
   );
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await api.get("navers", {
-          headers: {
-            Authorization: `Bearer ${await AsyncStorage.getItem("@JWT:TOKEN")}`,
-          },
-        });
-
-        setNavers(data);
-      } catch (error) {}
-    })();
-  }, []);
-
   return (
     <Container>
       <Header
@@ -72,7 +56,7 @@ const Navers: React.FC = () => {
       />
 
       <FlatList
-        data={navers}
+        data={data}
         ListHeaderComponent={renderListHeaderComponent}
         contentContainerStyle={{ paddingBottom: 36 }}
         renderItem={renderNaverItem}

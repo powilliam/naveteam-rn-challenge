@@ -1,10 +1,12 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useContext } from "react";
 import { TouchableOpacity } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-community/async-storage";
 import Modal from "react-native-modal";
+
+import { NaversContext } from "../../contexts/NaversContext";
 
 import api from "../../services/api";
 import { Naver as NaverModel } from "../../models/Naver";
@@ -30,6 +32,7 @@ const Naver: React.FC<NaverProps> = ({ data }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   const { navigate } = useNavigation();
+  const { deleteNaver } = useContext(NaversContext);
 
   const id = useMemo(() => data.id, [data]);
   const uri = useMemo(() => data.url, [data]);
@@ -61,6 +64,7 @@ const Naver: React.FC<NaverProps> = ({ data }) => {
       setIsVisible(true);
     } catch (error) {}
   }, [id]);
+  const onModalHide = useCallback(() => deleteNaver(id), [id, deleteNaver]);
 
   return (
     <Container>
@@ -115,7 +119,7 @@ const Naver: React.FC<NaverProps> = ({ data }) => {
         </ModalContainer>
       </Modal>
 
-      <Modal isVisible={isVisible}>
+      <Modal isVisible={isVisible} onModalHide={onModalHide}>
         <ModalContainer>
           <ModalHeader>
             <ModalTitle>Naver excluido</ModalTitle>

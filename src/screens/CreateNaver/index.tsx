@@ -1,10 +1,12 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useContext } from "react";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { FormHandles, SubmitHandler } from "@unform/core";
 import AsyncStorage from "@react-native-community/async-storage";
 import Modal from "react-native-modal";
+
+import { NaversContext } from "../../contexts/NaversContext";
 
 import api from "../../services/api";
 import { CreateNaverDTO } from "../../services/dto/CreateNaver.dto";
@@ -28,7 +30,8 @@ const CreateNaver: React.FC = () => {
 
   const [isVisible, setIsVisible] = useState(false);
 
-  const { goBack } = useNavigation();
+  const { goBack, navigate } = useNavigation();
+  const { addNaver } = useContext(NaversContext);
 
   const handleGoBack = useCallback(() => goBack(), [goBack]);
   const handleToggleIsVisible = useCallback(() => setIsVisible(!isVisible), [
@@ -38,20 +41,22 @@ const CreateNaver: React.FC = () => {
   const handleSubmit = useCallback<SubmitHandler<CreateNaverDTO>>(
     async (data, { reset }) => {
       try {
-        await api.post("navers", data, {
+        const response = await api.post<CreateNaverDTO>("navers", data, {
           headers: {
             Authorization: `Bearer ${await AsyncStorage.getItem("@JWT:TOKEN")}`,
           },
         });
+        addNaver(response.data);
         reset();
         setIsVisible(true);
       } catch (error) {}
     },
-    []
+    [addNaver]
   );
   const onPressSaveButton = useCallback(() => formRef.current?.submitForm(), [
     formRef,
   ]);
+  const onModalHide = useCallback(() => navigate("Navers"), [navigate]);
 
   return (
     <Container>
@@ -103,7 +108,7 @@ const CreateNaver: React.FC = () => {
         </Form>
       </ScrollView>
 
-      <Modal isVisible={isVisible}>
+      <Modal isVisible={isVisible} onModalHide={onModalHide}>
         <ModalContainer>
           <ModalHeader>
             <ModalTitle>Naver adicionado</ModalTitle>

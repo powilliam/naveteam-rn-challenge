@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useRef, useMemo } from "react";
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  useMemo,
+  useContext,
+} from "react";
 import { TouchableOpacity, ScrollView } from "react-native";
 import { useNavigation, RouteProp, useRoute } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -7,6 +13,8 @@ import AsyncStorage from "@react-native-community/async-storage";
 import Modal from "react-native-modal";
 
 import { RootStackParamList } from "../../routes/Stack";
+
+import { NaversContext } from "../../contexts/NaversContext";
 
 import api from "../../services/api";
 import { UpdateNaverDTO } from "../../services/dto/UpdateNaver.dto";
@@ -34,8 +42,9 @@ const UpdateNaver: React.FC = () => {
 
   const [isVisible, setIsVisible] = useState(false);
 
-  const { goBack } = useNavigation();
+  const { goBack, navigate } = useNavigation();
   const { params } = useRoute<UpdateNaverScreenRouteProp>();
+  const { updateNaver } = useContext(NaversContext);
 
   const id = useMemo(() => params.id, [params]);
 
@@ -47,20 +56,22 @@ const UpdateNaver: React.FC = () => {
   const handleSubmit = useCallback<SubmitHandler<UpdateNaverDTO>>(
     async (data, { reset }) => {
       try {
-        await api.put(`navers/${id}`, data, {
+        const response = await api.put<UpdateNaverDTO>(`navers/${id}`, data, {
           headers: {
             Authorization: `Bearer ${await AsyncStorage.getItem("@JWT:TOKEN")}`,
           },
         });
+        updateNaver(response.data);
         reset();
         setIsVisible(true);
       } catch (error) {}
     },
-    [id]
+    [id, updateNaver]
   );
   const onPressSaveButton = useCallback(() => formRef.current?.submitForm(), [
     formRef,
   ]);
+  const onModalHide = useCallback(() => navigate("Navers"), [navigate]);
 
   return (
     <Container>
@@ -112,7 +123,7 @@ const UpdateNaver: React.FC = () => {
         </Form>
       </ScrollView>
 
-      <Modal isVisible={isVisible}>
+      <Modal isVisible={isVisible} onModalHide={onModalHide}>
         <ModalContainer>
           <ModalHeader>
             <ModalTitle>Naver editado</ModalTitle>

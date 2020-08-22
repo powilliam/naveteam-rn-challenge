@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useMemo, useEffect } from "react";
+import React, {
+  useState,
+  useCallback,
+  useMemo,
+  useEffect,
+  useContext,
+} from "react";
 import { TouchableOpacity } from "react-native";
 import { useNavigation, RouteProp, useRoute } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -6,8 +12,9 @@ import AsyncStorage from "@react-native-community/async-storage";
 import Modal from "react-native-modal";
 import moment from "moment";
 
+import { NaversContext } from "../../contexts/NaversContext";
+
 import api from "../../services/api";
-import { ShowNaverDTO } from "../../services/dto/ShowNaver.dto";
 import { Naver as NaverModel } from "../../models/Naver";
 
 import Header from "../../components/Header";
@@ -41,6 +48,7 @@ const Naver: React.FC = () => {
 
   const { goBack, navigate } = useNavigation();
   const { params } = useRoute<NaverScreenRouteProp>();
+  const { deleteNaver } = useContext(NaversContext);
 
   const id = useMemo(() => params.id, [params]);
   const uri = useMemo(() => naver.url, [naver]);
@@ -73,9 +81,10 @@ const Naver: React.FC = () => {
           Authorization: `Bearer ${await AsyncStorage.getItem("@JWT:TOKEN")}`,
         },
       });
+      deleteNaver(id);
       setIsVisible(true);
     } catch (error) {}
-  }, [id]);
+  }, [id, deleteNaver]);
 
   useEffect(() => {
     (async () => {
