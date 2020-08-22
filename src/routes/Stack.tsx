@@ -1,5 +1,8 @@
 import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import {
+  createStackNavigator,
+  TransitionPresets,
+} from "@react-navigation/stack";
 
 import Navers from "../screens/Navers";
 import Naver from "../screens/Naver";
@@ -17,7 +20,12 @@ const { Navigator, Screen } = createStackNavigator<RootStackParamList>();
 
 const Stack: React.FC = () => {
   return (
-    <Navigator screenOptions={{ headerShown: false }}>
+    <Navigator
+      screenOptions={{
+        headerShown: false,
+        ...TransitionPresets.SlideFromRightIOS,
+      }}
+    >
       <Screen name="Navers" component={Navers} />
       <Screen name="Naver" component={Naver} />
       <Screen name="CreateNaver" component={CreateNaver} />

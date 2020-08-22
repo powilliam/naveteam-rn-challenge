@@ -1,5 +1,7 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useContext } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
+import { ThemeContext } from "styled-components";
 
 import NaveLogo from "../../assets/naver-logo.png";
 
@@ -12,18 +14,25 @@ export interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ headerLeftIcon, onPressLeftIcon }) => {
   const { top } = useSafeAreaInsets();
+  const { drawerBackgroundColor } = useContext(ThemeContext);
 
   return (
-    <Container style={{ paddingTop: top }}>
-      <HeaderLeft
-        onPress={onPressLeftIcon}
-        style={{ top }}
-        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+    <React.Fragment>
+      <StatusBar style="auto" backgroundColor={drawerBackgroundColor} />
+      <Container
+        style={{
+          marginTop: top,
+        }}
       >
-        {headerLeftIcon}
-      </HeaderLeft>
-      <Logo source={NaveLogo} resizeMode="contain" />
-    </Container>
+        <HeaderLeft
+          onPress={onPressLeftIcon}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          {headerLeftIcon}
+        </HeaderLeft>
+        <Logo source={NaveLogo} resizeMode="contain" />
+      </Container>
+    </React.Fragment>
   );
 };
 

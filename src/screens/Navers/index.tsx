@@ -51,7 +51,7 @@ const Navers: React.FC = () => {
   return (
     <Container>
       <Header
-        headerLeftIcon={<MaterialIcons name="menu" size={28} />}
+        headerLeftIcon={<MaterialIcons name="menu" size={24} />}
         onPressLeftIcon={handleOpenDrawer}
       />
 

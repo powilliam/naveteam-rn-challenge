@@ -16,9 +16,10 @@ const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
     () => dispatch(DrawerActions.closeDrawer()),
     [dispatch]
   );
-  const handleNavigateToNavers = useCallback(() => navigate("Navers"), [
-    navigate,
-  ]);
+  const handleNavigateToNavers = useCallback(
+    () => navigate("Navers", { screen: "Navers" }),
+    [navigate]
+  );
 
   return (
     <Container
