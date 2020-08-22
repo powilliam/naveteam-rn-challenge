@@ -104,50 +104,52 @@ const Naver: React.FC = () => {
         headerLeftIcon={<MaterialIcons name="chevron-left" size={28} />}
         onPressLeftIcon={handleGoBack}
       />
-      <Informations>
-        <Image source={{ uri }} resizeMode="cover" />
+      {uri && name && description && birthdate && admissionDate && projects && (
+        <Informations>
+          <Image source={{ uri }} resizeMode="cover" />
 
-        <Title large>{name}</Title>
-        <Description>{description}</Description>
+          <Title large>{name}</Title>
+          <Description>{description}</Description>
 
-        <Title>Data de nascimento</Title>
-        <Description>{birthdate}</Description>
+          <Title>Data de nascimento</Title>
+          <Description>{birthdate}</Description>
 
-        <Title>Data de admissão</Title>
-        <Description>{admissionDate}</Description>
+          <Title>Data de admissão</Title>
+          <Description>{admissionDate}</Description>
 
-        <Title>Projetos que participou</Title>
-        <Description>{projects}</Description>
+          <Title>Projetos que participou</Title>
+          <Description>{projects}</Description>
 
-        <Actions>
-          <Button
-            size="normal"
-            title="Excluir"
-            onPress={handleToggleIsConfirmModalVisible}
-            icon={
-              <MaterialIcons
-                name="delete"
-                size={24}
-                style={{ marginRight: 13 }}
-              />
-            }
-          />
-          <Button
-            size="normal"
-            title="Editar"
-            type="contained"
-            onPress={handleNavigateToUpdateNave}
-            icon={
-              <MaterialIcons
-                name="edit"
-                size={24}
-                color="#FFF"
-                style={{ marginRight: 13 }}
-              />
-            }
-          />
-        </Actions>
-      </Informations>
+          <Actions>
+            <Button
+              size="normal"
+              title="Excluir"
+              onPress={handleToggleIsConfirmModalVisible}
+              icon={
+                <MaterialIcons
+                  name="delete"
+                  size={24}
+                  style={{ marginRight: 13 }}
+                />
+              }
+            />
+            <Button
+              size="normal"
+              title="Editar"
+              type="contained"
+              onPress={handleNavigateToUpdateNave}
+              icon={
+                <MaterialIcons
+                  name="edit"
+                  size={24}
+                  color="#FFF"
+                  style={{ marginRight: 13 }}
+                />
+              }
+            />
+          </Actions>
+        </Informations>
+      )}
       <Modal isVisible={isConfirmModalVisible}>
         <ModalContainer>
           <ModalHeader>

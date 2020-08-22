@@ -14,6 +14,7 @@ export const Informations = styled.ScrollView``;
 export const Image = styled.Image`
   width: 100%;
   height: 288px;
+  background-color: ${(props) => props.theme.drawerBackgroundColor};
 `;
 
 export const Title = styled.Text<TitleProps>`

@@ -7,6 +7,7 @@ export const Container = styled.View`
 export const Image = styled.Image`
   min-width: 156px;
   height: 156px;
+  background-color: ${(props) => props.theme.drawerBackgroundColor};
 `;
 
 export const Name = styled.Text`
