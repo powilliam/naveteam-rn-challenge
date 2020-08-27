@@ -4,6 +4,8 @@ import {
   TransitionPresets,
 } from "@react-navigation/stack";
 
+import { Naver as NaverModel } from "../models/Naver";
+
 import Navers from "../screens/Navers";
 import Naver from "../screens/Naver";
 import CreateNaver from "../screens/CreateNaver";
@@ -13,7 +15,7 @@ export type RootStackParamList = {
   Navers: {};
   Naver: { id: string };
   CreateNaver: {};
-  UpdateNaver: { id: string };
+  UpdateNaver: { naver: NaverModel };
 };
 
 const { Navigator, Screen } = createStackNavigator<RootStackParamList>();

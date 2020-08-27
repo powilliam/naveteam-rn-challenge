@@ -4,19 +4,26 @@ import React, {
   useCallback,
   useMemo,
   useEffect,
+  useContext,
 } from "react";
-import AsyncStorage from "@react-native-community/async-storage";
 import { update } from "immutable";
 
-import api from "../services/api";
+import { AuthContext } from "./AuthContext";
+
+import createService from "../services/api";
+import { CreateNaverDTO } from "../services/dto/CreateNaver.dto";
+import { UpdateNaverDTO } from "../services/dto/UpdateNaver.dto";
 import { Naver } from "../models/Naver";
 
-export type AddNaverHandler = (naver: Naver) => void;
-export type UpdateNaverHandler = (naver: Naver) => void;
-export type DeleteNaverHandler = (id: string) => void;
+export type GetNaverHandler = (id: string) => Naver;
+export type AddNaverHandler = (naver: CreateNaverDTO) => Promise<void>;
+export type UpdateNaverHandler = (naver: UpdateNaverDTO) => Promise<void>;
+export type DeleteNaverHandler = (id: string) => Promise<void>;
 
 export interface INaversContext {
   data: Naver[];
+  isLoading: boolean;
+  getNaver: GetNaverHandler;
   addNaver: AddNaverHandler;
   updateNaver: UpdateNaverHandler;
   deleteNaver: DeleteNaverHandler;
@@ -27,43 +34,95 @@ export const NaversContext = createContext<INaversContext>(
 
 const NaversProvider: React.FC = ({ children }) => {
   const [data, setData] = useState<Naver[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
+  const { token } = useContext(AuthContext);
+
+  const api = useMemo(
+    () => createService({ headers: { Authorization: `Bearer ${token}` } }),
+    [token]
+  );
+
+  const getNaver = useCallback<GetNaverHandler>(
+    (id) => data.find((item) => item.id === id) || ({} as Naver),
+    [data]
+  );
   const addNaver = useCallback<AddNaverHandler>(
-    (naver) => setData((lastState) => [...lastState, naver]),
-    []
+    async (dto) => {
+      try {
+        setIsLoading(true);
+        const response = await api.post<CreateNaverDTO>("navers", dto);
+        setData((lastState) => [...lastState, response.data]);
+      } catch (error) {
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [api]
   );
   const updateNaver = useCallback<UpdateNaverHandler>(
-    (naver) =>
-      setData((lastState) => {
-        const naverIndex = lastState.findIndex((item) => item.id === naver.id);
-        return update(lastState, naverIndex, () => naver);
-      }),
-    []
+    async (dto) => {
+      const {
+        id,
+        name,
+        job_role,
+        birthdate,
+        admission_date,
+        project,
+        url,
+      } = dto;
+      try {
+        setIsLoading(true);
+        const response = await api.put<UpdateNaverDTO>(`navers/${id}`, {
+          name,
+          job_role,
+          birthdate,
+          admission_date,
+          project,
+          url,
+        });
+        setData((lastState) => {
+          const naverIndex = lastState.findIndex((naver) => naver.id === id);
+          return update(lastState, naverIndex, () => response.data);
+        });
+      } catch (error) {
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [api]
   );
-  const deleteNaver = useCallback<DeleteNaverHandler>((id) => {
-    setData((lastState) => lastState.filter((item) => item.id !== id));
-  }, []);
+  const deleteNaver = useCallback<DeleteNaverHandler>(
+    async (id) => {
+      try {
+        setIsLoading(true);
+        setData((lastState) => lastState.filter((item) => item.id !== id));
+        await api.delete(`navers/${id}`);
+      } catch (error) {
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [api]
+  );
 
-  const value = useMemo(() => ({ data, addNaver, updateNaver, deleteNaver }), [
-    data,
-    addNaver,
-    updateNaver,
-    deleteNaver,
-  ]);
+  const value = useMemo(
+    () => ({ data, isLoading, getNaver, addNaver, updateNaver, deleteNaver }),
+    [data, isLoading, getNaver, addNaver, updateNaver, deleteNaver]
+  );
 
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await api.get("navers", {
-          headers: {
-            Authorization: `Bearer ${await AsyncStorage.getItem("@JWT:TOKEN")}`,
-          },
-        });
-
+        setIsLoading(true);
+        const { data } = await api.get("navers");
         setData(data);
-      } catch (error) {}
+      } catch (error) {
+      } finally {
+        setIsLoading(false);
+      }
     })();
-  }, []);
+  }, [api]);
 
   return (
     <NaversContext.Provider value={value}>{children}</NaversContext.Provider>

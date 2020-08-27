@@ -20,6 +20,10 @@ const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
     () => navigate("Navers", { screen: "Navers" }),
     [navigate]
   );
+  const handleLogout = useCallback(() => {
+    dispatch(DrawerActions.closeDrawer());
+    logout();
+  }, [dispatch, logout]);
 
   return (
     <Container
@@ -35,7 +39,7 @@ const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
       <Item onPress={handleNavigateToNavers}>
         <Label>Navers</Label>
       </Item>
-      <Item onPress={logout} style={{ marginTop: 16 }}>
+      <Item onPress={handleLogout} style={{ marginTop: 16 }}>
         <Label>Sair</Label>
       </Item>
     </Container>

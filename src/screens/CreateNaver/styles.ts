@@ -16,3 +16,10 @@ export const Title = styled.Text`
 export const Form = styled(UnformForm)`
   padding: 0px 16px;
 `;
+
+export const FormError = styled.Text`
+  margin-top: 12px;
+  font-size: 12px;
+  font-family: Montserrat_400Regular;
+  color: red;
+`;

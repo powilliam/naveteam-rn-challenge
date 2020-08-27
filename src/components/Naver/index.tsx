@@ -3,23 +3,12 @@ import { TouchableOpacity } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-community/async-storage";
-import Modal from "react-native-modal";
 
 import { NaversContext } from "../../contexts/NaversContext";
 
-import api from "../../services/api";
 import { Naver as NaverModel } from "../../models/Naver";
 
-import Button from "../Button";
-
-import {
-  ModalContainer,
-  ModalHeader,
-  ModalTitle,
-  ModalDescription,
-  ModalFooter,
-} from "../../layouts/Modal";
+import Modal from "../Modal";
 
 import { Container, Image, Name, Description, Actions } from "./styles";
 
@@ -37,14 +26,15 @@ const Naver: React.FC<NaverProps> = ({ data }) => {
   const id = useMemo(() => data.id, [data]);
   const uri = useMemo(() => data.url, [data]);
   const name = useMemo(() => data.name, [data]);
-  const description = useMemo(() => data.job_role, [data]);
+  const job_role = useMemo(() => data.job_role, [data]);
 
   const handleNavigateToNaver = useCallback(() => navigate("Naver", { id }), [
     navigate,
+    id,
   ]);
   const handleNavigateToUpdateNave = useCallback(
-    () => navigate("UpdateNaver", { id }),
-    [navigate]
+    () => navigate("UpdateNaver", { naver: data }),
+    [navigate, data]
   );
   const handleToggleIsConfirmModalVisible = useCallback(
     () => setIsConfirmModalVisible(!isConfirmModalVisible),
@@ -54,86 +44,55 @@ const Naver: React.FC<NaverProps> = ({ data }) => {
     isVisible,
   ]);
   const handleConfirmDeletion = useCallback(async () => {
-    try {
-      setIsConfirmModalVisible(false);
-      await api.delete(`navers/${id}`, {
-        headers: {
-          Authorization: `Bearer ${await AsyncStorage.getItem("@JWT:TOKEN")}`,
-        },
-      });
-      setIsVisible(true);
-    } catch (error) {}
-  }, [id]);
-  const onModalHide = useCallback(() => deleteNaver(id), [id, deleteNaver]);
+    setIsConfirmModalVisible(false);
+    setIsVisible(true);
+  }, []);
+  const onModalHide = useCallback(async () => await deleteNaver(id), [
+    id,
+    deleteNaver,
+  ]);
 
   return (
-    <Container>
-      <RectButton onPress={handleNavigateToNaver}>
-        <Image source={{ uri }} resizeMode="cover" />
-      </RectButton>
-      <Name>{name}</Name>
-      <Description>{description}</Description>
-      <Actions>
-        <TouchableOpacity
-          onPress={handleToggleIsConfirmModalVisible}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <MaterialIcons name="delete" size={24} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={handleNavigateToUpdateNave}
-          style={{ marginLeft: 12 }}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <MaterialIcons name="edit" size={24} />
-        </TouchableOpacity>
-      </Actions>
+    <React.Fragment>
+      <Container>
+        <RectButton onPress={handleNavigateToNaver}>
+          <Image source={{ uri }} resizeMode="cover" />
+        </RectButton>
+        <Name>{name}</Name>
+        <Description>{job_role}</Description>
+        <Actions>
+          <TouchableOpacity
+            onPress={handleToggleIsConfirmModalVisible}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <MaterialIcons name="delete" size={24} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleNavigateToUpdateNave}
+            style={{ marginLeft: 12 }}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <MaterialIcons name="edit" size={24} />
+          </TouchableOpacity>
+        </Actions>
+      </Container>
+      <Modal
+        title="Excluir naver"
+        message="Tem certeza que deseja excluir este naver?"
+        isVisible={isConfirmModalVisible}
+        onPressCloseButton={handleToggleIsConfirmModalVisible}
+        onPressCancelButton={handleToggleIsConfirmModalVisible}
+        onPressConfirmButton={handleConfirmDeletion}
+      />
 
-      <Modal isVisible={isConfirmModalVisible}>
-        <ModalContainer>
-          <ModalHeader>
-            <ModalTitle>Excluir naver</ModalTitle>
-            <TouchableOpacity
-              onPress={handleToggleIsConfirmModalVisible}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            >
-              <MaterialIcons name="close" size={24} />
-            </TouchableOpacity>
-          </ModalHeader>
-          <ModalDescription>
-            Tem certeza que deseja excluir este naver?
-          </ModalDescription>
-          <ModalFooter>
-            <Button
-              size="small"
-              title="Cancelar"
-              onPress={handleToggleIsConfirmModalVisible}
-            />
-            <Button
-              size="small"
-              type="contained"
-              title="Excluir"
-              onPress={handleConfirmDeletion}
-            />
-          </ModalFooter>
-        </ModalContainer>
-      </Modal>
-
-      <Modal isVisible={isVisible} onModalHide={onModalHide}>
-        <ModalContainer>
-          <ModalHeader>
-            <ModalTitle>Naver excluido</ModalTitle>
-            <TouchableOpacity
-              onPress={handleToggleIsVisible}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            >
-              <MaterialIcons name="close" size={24} />
-            </TouchableOpacity>
-          </ModalHeader>
-          <ModalDescription>Naver excluido com sucesso!</ModalDescription>
-        </ModalContainer>
-      </Modal>
-    </Container>
+      <Modal
+        title="Naver excluído"
+        message="Naver excluído com sucesso!"
+        isVisible={isVisible}
+        onModalHide={onModalHide}
+        onPressCloseButton={handleToggleIsVisible}
+      />
+    </React.Fragment>
   );
 };
 

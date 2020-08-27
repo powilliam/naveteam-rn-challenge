@@ -5,31 +5,19 @@ import React, {
   useEffect,
   useContext,
 } from "react";
-import { TouchableOpacity } from "react-native";
 import { useNavigation, RouteProp, useRoute } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-community/async-storage";
-import Modal from "react-native-modal";
 import moment from "moment";
 
 import { NaversContext } from "../../contexts/NaversContext";
 
-import api from "../../services/api";
-import { ShowNaverDTO } from "../../services/dto/ShowNaver.dto";
 import { Naver as NaverModel } from "../../models/Naver";
 
 import Header from "../../components/Header";
 import Button from "../../components/Button";
+import Modal from "../../components/Modal";
 
 import { RootStackParamList } from "../../routes/Stack";
-
-import {
-  ModalContainer,
-  ModalHeader,
-  ModalTitle,
-  ModalDescription,
-  ModalFooter,
-} from "../../layouts/Modal";
 
 import {
   Container,
@@ -49,23 +37,26 @@ const Naver: React.FC = () => {
 
   const { goBack, navigate } = useNavigation();
   const { params } = useRoute<NaverScreenRouteProp>();
-  const { deleteNaver } = useContext(NaversContext);
+  const { getNaver, deleteNaver } = useContext(NaversContext);
 
   const id = useMemo(() => params.id, [params]);
   const uri = useMemo(() => naver.url, [naver]);
   const name = useMemo(() => naver.name, [naver]);
-  const description = useMemo(() => naver.job_role, [naver]);
-  const birthdate = useMemo(() => moment(naver.birthdate).format("L"), [naver]);
-  const admissionDate = useMemo(
-    () => moment(naver.admission_date).format("L"),
+  const job_role = useMemo(() => naver.job_role, [naver]);
+  const birthdate = useMemo(
+    () => moment(naver.birthdate).format("DD/MM/YYYY"),
+    [naver]
+  );
+  const admission_date = useMemo(
+    () => moment(naver.admission_date).format("DD/MM/YYYY"),
     [naver]
   );
   const projects = useMemo(() => naver.project, [naver]);
 
   const handleGoBack = useCallback(() => goBack(), [goBack]);
   const handleNavigateToUpdateNave = useCallback(
-    () => navigate("UpdateNaver", { id }),
-    [navigate, id]
+    () => navigate("UpdateNaver", { naver }),
+    [navigate, naver]
   );
   const handleToggleIsConfirmModalVisible = useCallback(
     () => setIsConfirmModalVisible(!isConfirmModalVisible),
@@ -75,48 +66,36 @@ const Naver: React.FC = () => {
     isVisible,
   ]);
   const handleConfirmDeletion = useCallback(async () => {
-    try {
-      setIsConfirmModalVisible(false);
-      await api.delete(`navers/${id}`, {
-        headers: {
-          Authorization: `Bearer ${await AsyncStorage.getItem("@JWT:TOKEN")}`,
-        },
-      });
-      deleteNaver(id);
-      setIsVisible(true);
-    } catch (error) {}
-  }, [id, deleteNaver]);
+    setIsConfirmModalVisible(false);
+    setIsVisible(true);
+  }, []);
+  const onModalHide = useCallback(async () => {
+    goBack();
+    await deleteNaver(id);
+  }, [deleteNaver, id, goBack]);
 
   useEffect(() => {
-    (async () => {
-      const { data } = await api.get<ShowNaverDTO>(`navers/${id}`, {
-        headers: {
-          Authorization: `Bearer ${await AsyncStorage.getItem("@JWT:TOKEN")}`,
-        },
-      });
-
-      setNaver(data);
-    })();
-  }, [id]);
+    setNaver(() => getNaver(id));
+  }, [id, getNaver]);
 
   return (
-    <Container>
-      <Header
-        headerLeftIcon={<MaterialIcons name="chevron-left" size={28} />}
-        onPressLeftIcon={handleGoBack}
-      />
-      {uri && name && description && birthdate && admissionDate && projects && (
+    <React.Fragment>
+      <Container>
+        <Header
+          headerLeftIcon={<MaterialIcons name="chevron-left" size={28} />}
+          onPressLeftIcon={handleGoBack}
+        />
         <Informations>
           <Image source={{ uri }} resizeMode="cover" />
 
           <Title large>{name}</Title>
-          <Description>{description}</Description>
+          <Description>{job_role}</Description>
 
           <Title>Data de nascimento</Title>
           <Description>{birthdate}</Description>
 
           <Title>Data de admissão</Title>
-          <Description>{admissionDate}</Description>
+          <Description>{admission_date}</Description>
 
           <Title>Projetos que participou</Title>
           <Description>{projects}</Description>
@@ -150,52 +129,23 @@ const Naver: React.FC = () => {
             />
           </Actions>
         </Informations>
-      )}
-      <Modal isVisible={isConfirmModalVisible}>
-        <ModalContainer>
-          <ModalHeader>
-            <ModalTitle>Excluir naver</ModalTitle>
-            <TouchableOpacity
-              onPress={handleToggleIsConfirmModalVisible}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            >
-              <MaterialIcons name="close" size={24} />
-            </TouchableOpacity>
-          </ModalHeader>
-          <ModalDescription>
-            Tem certeza que deseja excluir este naver?
-          </ModalDescription>
-          <ModalFooter>
-            <Button
-              size="small"
-              title="Cancelar"
-              onPress={handleToggleIsConfirmModalVisible}
-            />
-            <Button
-              size="small"
-              type="contained"
-              title="Excluir"
-              onPress={handleConfirmDeletion}
-            />
-          </ModalFooter>
-        </ModalContainer>
-      </Modal>
-
-      <Modal isVisible={isVisible} onModalHide={handleGoBack}>
-        <ModalContainer>
-          <ModalHeader>
-            <ModalTitle>Naver excluido</ModalTitle>
-            <TouchableOpacity
-              onPress={handleToggleIsVisible}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            >
-              <MaterialIcons name="close" size={24} />
-            </TouchableOpacity>
-          </ModalHeader>
-          <ModalDescription>Naver excluido com sucesso!</ModalDescription>
-        </ModalContainer>
-      </Modal>
-    </Container>
+      </Container>
+      <Modal
+        title="Excluir naver"
+        message="Tem certeza que deseja excluir este naver?"
+        isVisible={isConfirmModalVisible}
+        onPressCloseButton={handleToggleIsConfirmModalVisible}
+        onPressCancelButton={handleToggleIsConfirmModalVisible}
+        onPressConfirmButton={handleConfirmDeletion}
+      />
+      <Modal
+        title="Naver excluído"
+        message="Naver excluído com sucesso!"
+        isVisible={isVisible}
+        onModalHide={onModalHide}
+        onPressCloseButton={handleToggleIsVisible}
+      />
+    </React.Fragment>
   );
 };
 

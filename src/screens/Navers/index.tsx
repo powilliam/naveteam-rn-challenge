@@ -14,7 +14,7 @@ import { Container, ListHeader, ListHeaderTitle } from "./styles";
 
 const Navers: React.FC = () => {
   const { dispatch, navigate } = useNavigation();
-  const { data } = useContext(NaversContext);
+  const { data, isLoading } = useContext(NaversContext);
 
   const handleOpenDrawer = useCallback(
     () => dispatch(DrawerActions.openDrawer()),
@@ -30,6 +30,7 @@ const Navers: React.FC = () => {
       <ListHeader>
         <ListHeaderTitle>Navers</ListHeaderTitle>
         <Button
+          isLoading={isLoading}
           size="normal"
           type="contained"
           title="Adicionar naver"
@@ -37,13 +38,13 @@ const Navers: React.FC = () => {
         />
       </ListHeader>
     ),
-    []
+    [isLoading]
   );
-  const renderNaverItem = useCallback<ListRenderItem<NaverModel>>(
+  const renderItem = useCallback<ListRenderItem<NaverModel>>(
     ({ item }) => <Naver data={item} />,
     []
   );
-  const extractNaverKey = useCallback(
+  const keyExtractor = useCallback(
     (naver: NaverModel, _: number) => naver.id,
     []
   );
@@ -59,9 +60,9 @@ const Navers: React.FC = () => {
         data={data}
         ListHeaderComponent={renderListHeaderComponent}
         contentContainerStyle={{ paddingBottom: 36 }}
-        renderItem={renderNaverItem}
+        renderItem={renderItem}
         numColumns={2}
-        keyExtractor={extractNaverKey}
+        keyExtractor={keyExtractor}
       />
     </Container>
   );
